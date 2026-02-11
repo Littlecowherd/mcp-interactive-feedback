@@ -12,9 +12,15 @@ import os
 import threading
 import time
 import uuid
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+# 抑制 uvicorn 内部 websockets legacy 弃用警告（uvicorn 尚未完全迁移到新 API）
+warnings.filterwarnings("ignore", message="websockets.legacy", category=DeprecationWarning)
+warnings.filterwarnings("ignore", message="websockets.server.WebSocketServerProtocol", category=DeprecationWarning)
+warnings.filterwarnings("ignore", message="remove second argument of ws_handler", category=DeprecationWarning)
 
 import uvicorn
 from fastapi import FastAPI, Request

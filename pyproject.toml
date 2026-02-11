@@ -1,6 +1,6 @@
 [project]
 name = "mcp-interactive-feedback"
-version = "0.1.0"
+version = "0.1.1"
 description = "An MCP server that enables interactive human feedback collection during AI-assisted development, with Web UI support for text, images, and command execution."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -30,9 +30,9 @@ dependencies = [
     "fastmcp>=2.0.0",
     "psutil>=7.0.0",
     "fastapi>=0.115.0",
-    "uvicorn>=0.30.0",
+    "uvicorn>=0.34.0",
     "jinja2>=3.1.0",
-    "websockets>=13.0.0",
+    "websockets>=14.0",
     "aiohttp>=3.8.0",
     "mcp>=1.9.3",
 ]
@@ -68,8 +68,8 @@ packages = ["src/mcp_feedback_enhanced"]
 # 桌面應用程式二進制檔案現在直接存儲在 Git 中
 # 由 build-desktop.yml 工作流程自動構建並提交
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "bump2version>=1.0.1",
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
