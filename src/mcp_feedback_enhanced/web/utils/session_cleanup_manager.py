@@ -24,7 +24,7 @@ from ..models.feedback_session import CleanupReason, SessionStatus
 class CleanupPolicy:
     """清理策略配置"""
 
-    max_idle_time: int = 1800  # 最大空閒時間（秒）
+    max_idle_time: int = 3600  # 最大空閒時間（秒），與 MCP 工具超時一致
     max_session_age: int = 7200  # 最大會話年齡（秒）
     max_sessions: int = 10  # 最大會話數量
     cleanup_interval: int = 300  # 清理間隔（秒）

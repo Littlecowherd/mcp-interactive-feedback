@@ -125,7 +125,7 @@ class WebFeedbackSession:
         project_directory: str,
         summary: str,
         auto_cleanup_delay: int = 3600,
-        max_idle_time: int = 1800,
+        max_idle_time: int = 3600,
     ):
         self.session_id = session_id
         self.project_directory = project_directory
