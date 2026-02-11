@@ -32,7 +32,7 @@ from typing import Annotated, Any
 
 from fastmcp import FastMCP
 from fastmcp.utilities.types import Image as MCPImage
-from mcp.types import TextContent
+from mcp.types import ImageContent, TextContent
 from pydantic import Field
 
 # 導入統一的調試功能
@@ -360,15 +360,15 @@ def create_feedback_text(feedback_data: dict) -> str:
     return "\n\n".join(text_parts) if text_parts else "用戶未提供任何回饋內容。"
 
 
-def process_images(images_data: list[dict]) -> list[MCPImage]:
+def process_images(images_data: list[dict]) -> list[ImageContent]:
     """
-    處理圖片資料，轉換為 MCP 圖片對象
+    處理圖片資料，轉換為 MCP ImageContent 對象
 
     Args:
         images_data: 圖片資料列表
 
     Returns:
-        List[MCPImage]: MCP 圖片對象列表
+        List[ImageContent]: MCP ImageContent 對象列表
     """
     mcp_images = []
 
@@ -406,9 +406,9 @@ def process_images(images_data: list[dict]) -> list[MCPImage]:
             else:
                 image_format = "png"  # 默認使用 PNG
 
-            # 創建 MCPImage 對象
-            mcp_image = MCPImage(data=image_bytes, format=image_format)
-            mcp_images.append(mcp_image)
+            # 創建 MCPImage 對象，然後轉換為標準 ImageContent
+            helper = MCPImage(data=image_bytes, format=image_format)
+            mcp_images.append(helper.to_image_content())
 
             debug_log(f"圖片 {i} ({file_name}) 處理成功，格式: {image_format}")
 
@@ -426,13 +426,13 @@ def process_images(images_data: list[dict]) -> list[MCPImage]:
 
 
 # ===== MCP 工具定義 =====
-@mcp.tool()
+@mcp.tool(output_schema=None)
 async def interactive_feedback(
     project_directory: Annotated[str, Field(description="專案目錄路徑")] = ".",
     summary: Annotated[
         str, Field(description="AI 工作完成的摘要說明")
     ] = "我已完成了您請求的任務。",
-    timeout: Annotated[int, Field(description="等待用戶回饋的超時時間（秒）")] = 600,
+    timeout: Annotated[int, Field(description="等待用戶回饋的超時時間（秒）")] = 3600,
 ) -> list:
     """Interactive feedback collection tool for LLM agents.
 
@@ -464,10 +464,28 @@ async def interactive_feedback(
             project_directory = os.getcwd()
         project_directory = os.path.abspath(project_directory)
 
-        # 使用 Web 模式
-        debug_log("回饋模式: web")
+        # 超時時間優先級: 環境變數 MCP_FEEDBACK_TIMEOUT > 工具參數 timeout > 預設值 600
+        effective_timeout = timeout
+        env_timeout = os.getenv("MCP_FEEDBACK_TIMEOUT")
+        if env_timeout:
+            try:
+                env_timeout_value = int(env_timeout)
+                if env_timeout_value > 0:
+                    effective_timeout = env_timeout_value
+                    debug_log(
+                        f"使用環境變數 MCP_FEEDBACK_TIMEOUT 覆蓋超時時間: {effective_timeout} 秒"
+                    )
+            except ValueError:
+                debug_log(
+                    f"MCP_FEEDBACK_TIMEOUT 格式錯誤 ({env_timeout})，使用工具參數值: {timeout} 秒"
+                )
 
-        result = await launch_web_feedback_ui(project_directory, summary, timeout)
+        # 使用 Web 模式
+        debug_log(f"回饋模式: web，超時時間: {effective_timeout} 秒")
+
+        result = await launch_web_feedback_ui(
+            project_directory, summary, effective_timeout
+        )
 
         # 處理取消情況
         if not result:

@@ -1,11 +1,12 @@
 [project]
-name = "mcp-feedback-enhanced"
-version = "2.6.0"
-description = "Enhanced MCP server for interactive user feedback and command execution in AI-assisted development, featuring dual interface support (Web UI and Desktop Application) with intelligent environment detection and cross-platform compatibility."
+name = "mcp-interactive-feedback"
+version = "0.1.0"
+description = "An MCP server that enables interactive human feedback collection during AI-assisted development, with Web UI support for text, images, and command execution."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
-    { name = "Minidoracat", email = "minidora0702@gmail.com" }
+    { name = "Minidoracat", email = "minidora0702@gmail.com" },
+    { name = "Littlecowherd" }
 ]
 keywords = ["mcp", "ai", "feedback", "web-ui", "desktop-app", "interactive", "development", "cross-platform", "tauri", "dual-interface"]
 classifiers = [
@@ -43,11 +44,13 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Minidoracat/mcp-feedback-enhanced"
-Repository = "https://github.com/Minidoracat/mcp-feedback-enhanced"
-Issues = "https://github.com/Minidoracat/mcp-feedback-enhanced/issues"
+Homepage = "https://github.com/Littlecowherd/mcp-interactive-feedback"
+Repository = "https://github.com/Littlecowherd/mcp-interactive-feedback"
+Issues = "https://github.com/Littlecowherd/mcp-interactive-feedback/issues"
+Upstream = "https://github.com/Minidoracat/mcp-feedback-enhanced"
 
 [project.scripts]
+mcp-interactive-feedback = "mcp_feedback_enhanced.__main__:main"
 mcp-feedback-enhanced = "mcp_feedback_enhanced.__main__:main"
 interactive-feedback-mcp = "mcp_feedback_enhanced.__main__:main"
 
